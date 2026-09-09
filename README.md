@@ -32,11 +32,11 @@ Modern application development requires stitching together dozens of tiny packag
 Install DevoraX using your favorite package manager:
 
 ```bash
-npm install devorax
+npm install @prakash1935/devorax
 # or
-yarn add devorax
+yarn add @prakash1935/devorax
 # or
-pnpm add devorax
+pnpm add @prakash1935/devorax
 ```
 
 ---
