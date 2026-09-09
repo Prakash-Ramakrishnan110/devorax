@@ -1,12 +1,10 @@
 <div align="center">
-  <img src="./assets/banner.png" alt="DevoraX Toolkit Banner" width="100%" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Inter&weight=700&size=36&pause=1000&color=000000&center=true&vCenter=true&width=600&height=80&lines=DevoraX+Toolkit;Build+less+boilerplate;Ship+better+software" alt="Typing SVG Animation" />
 
   # DevoraX
 
-  **Build less boilerplate. Ship better software.**
-
-  [![npm version](https://img.shields.io/npm/v/devorax?color=000000&labelColor=333333&style=for-the-badge)](https://www.npmjs.com/package/devorax)
-  [![License](https://img.shields.io/npm/l/devorax?color=000000&labelColor=333333&style=for-the-badge)](https://github.com/your-org/devorax/blob/main/LICENSE)
+  [![npm version](https://img.shields.io/npm/v/@prakash1935/devorax?color=000000&labelColor=333333&style=for-the-badge)](https://www.npmjs.com/package/@prakash1935/devorax)
+  [![License](https://img.shields.io/npm/l/@prakash1935/devorax?color=000000&labelColor=333333&style=for-the-badge)](https://github.com/Prakash-Ramakrishnan110/devorax/blob/main/LICENSE)
   [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue?style=for-the-badge&logo=typescript&logoColor=white&color=000000&labelColor=333333)](https://www.typescriptlang.org/)
   
   <p align="center">
