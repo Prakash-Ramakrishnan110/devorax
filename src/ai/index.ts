@@ -80,3 +80,54 @@ export function normalizeTokenUsage(input: any): TokenUsage {
 
   return { promptTokens, completionTokens, totalTokens };
 }
+
+/**
+ * Parses and extracts function calling arguments from an AI response.
+ * Useful when working with OpenAI or Anthropic tool calls.
+ * 
+ * @param toolCallArgs - Raw string or object arguments from the AI
+ * @returns Parsed object of type T
+ */
+export function parseFunctionArgs<T = unknown>(toolCallArgs: string | object): T {
+  if (typeof toolCallArgs === 'object' && toolCallArgs !== null) {
+    return toolCallArgs as T;
+  }
+  
+  if (typeof toolCallArgs === 'string') {
+    try {
+      return JSON.parse(toolCallArgs) as T;
+    } catch (e) {
+      throw new Error('Failed to parse function arguments JSON: ' + (e as Error).message);
+    }
+  }
+  
+  throw new Error('Invalid function arguments type. Expected string or object.');
+}
+
+/**
+ * Roughly estimates token count for a given text based on standard heuristics.
+ * (1 token ~= 4 English chars). This is not an exact calculation for specific tokenizers.
+ *
+ * @param text - The text to estimate
+ * @returns Approximate number of tokens
+ */
+export function estimateTokens(text: string): number {
+  if (!text) return 0;
+  // Standard heuristic: 1 token is approx 4 characters in English
+  return Math.ceil(text.length / 4);
+}
+
+/**
+ * A helper to consume an async iterable stream and accumulate the chunks into a full string.
+ * This is useful for streaming AI responses where you need the final text.
+ *
+ * @param stream - An async iterable stream of strings
+ * @returns A promise that resolves to the complete concatenated string
+ */
+export async function consumeStream(stream: AsyncIterable<string>): Promise<string> {
+  let fullText = '';
+  for await (const chunk of stream) {
+    fullText += chunk;
+  }
+  return fullText;
+}

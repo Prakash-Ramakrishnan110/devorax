@@ -33,7 +33,7 @@ export function generateOTP(length = 6): string {
  */
 export function maskSecret(secret: string, visibleChars = 4, maskChar = '*'): string {
   if (!secret) return '';
-  if (visibleChars < 0) visibleChars = 0;
+  if (visibleChars <= 0) return maskChar.repeat(secret.length);
   if (secret.length <= visibleChars) return maskChar.repeat(secret.length);
   const maskedLength = secret.length - visibleChars;
   return maskChar.repeat(maskedLength) + secret.slice(-visibleChars);
@@ -73,4 +73,75 @@ export async function hashData(data: string): Promise<string> {
   const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', dataBuffer);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * Encrypts a string using AES-256-GCM.
+ * 
+ * @param plaintext - The text to encrypt
+ * @param keyString - A 32-character (256-bit) string key
+ * @returns A promise resolving to the base64 encoded ciphertext (prepended with IV)
+ */
+export async function encryptAES(plaintext: string, keyString: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(keyString.padEnd(32, '0').slice(0, 32));
+  const cryptoKey = await globalThis.crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'AES-GCM' },
+    false,
+    ['encrypt']
+  );
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+  const encodedText = encoder.encode(plaintext);
+  
+  const ciphertextBuffer = await globalThis.crypto.subtle.encrypt(
+    { name: 'AES-GCM', iv },
+    cryptoKey,
+    encodedText
+  );
+  
+  const ivArray = Array.from(iv);
+  const cipherArray = Array.from(new Uint8Array(ciphertextBuffer));
+  const combined = new Uint8Array([...ivArray, ...cipherArray]);
+  
+  // Base64 encode
+  return btoa(String.fromCharCode.apply(null, combined as unknown as number[]));
+}
+
+/**
+ * Decrypts a string encrypted by `encryptAES`.
+ * 
+ * @param encryptedBase64 - The base64 encoded string containing IV + ciphertext
+ * @param keyString - The 32-character key used for encryption
+ * @returns A promise resolving to the decrypted plaintext string
+ */
+export async function decryptAES(encryptedBase64: string, keyString: string): Promise<string> {
+  const binaryString = atob(encryptedBase64);
+  const combined = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    combined[i] = binaryString.charCodeAt(i);
+  }
+  
+  const iv = combined.slice(0, 12);
+  const ciphertextBuffer = combined.slice(12);
+  
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(keyString.padEnd(32, '0').slice(0, 32));
+  const cryptoKey = await globalThis.crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'AES-GCM' },
+    false,
+    ['decrypt']
+  );
+  
+  const decryptedBuffer = await globalThis.crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv },
+    cryptoKey,
+    ciphertextBuffer
+  );
+  
+  const decoder = new TextDecoder();
+  return decoder.decode(decryptedBuffer);
 }

@@ -82,3 +82,33 @@ export function isValidIP(ip: string): boolean {
   }
   return false;
 }
+
+/**
+ * A tiny schema validation helper for objects.
+ * Validates an object against a record of validation functions.
+ * 
+ * @param data - The object to validate
+ * @param schema - A schema object where keys map to validation functions
+ * @returns An object containing `valid` boolean and an array of `errors`
+ */
+export function validateSchema<T extends Record<string, unknown>>(
+  data: Partial<T>,
+  schema: Record<keyof T, (val: unknown) => boolean>
+): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+  
+  if (typeof data !== 'object' || data === null) {
+    return { valid: false, errors: ['Data must be an object'] };
+  }
+
+  for (const [key, validator] of Object.entries(schema)) {
+    const value = (data as Record<string, unknown>)[key];
+    const isValid = (validator as (val: unknown) => boolean)(value);
+    
+    if (!isValid) {
+      errors.push(`Validation failed for field: ${key}`);
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
+}

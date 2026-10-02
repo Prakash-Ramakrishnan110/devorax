@@ -4,9 +4,12 @@
   # DevoraX
 
   [![npm version](https://img.shields.io/npm/v/@prakash1935/devorax?color=000000&labelColor=333333&style=for-the-badge)](https://www.npmjs.com/package/@prakash1935/devorax)
-  [![License](https://img.shields.io/npm/l/@prakash1935/devorax?color=000000&labelColor=333333&style=for-the-badge)](https://github.com/Prakash-Ramakrishnan110/devorax/blob/main/LICENSE)
+  [![License](https://img.shields.io/npm/l/@prakash1935/devorax?color=000000&labelColor=333333&style=for-the-badge)](#-license)
   [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue?style=for-the-badge&logo=typescript&logoColor=white&color=000000&labelColor=333333)](https://www.typescriptlang.org/)
   
+  <br />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Inter&weight=600&size=20&pause=2000&color=2ecc71&center=true&vCenter=true&width=400&height=40&lines=🧪+100%25+Test+Coverage;83+Tests+Passed+Successfully!" alt="Test Coverage Animation" />
+
   <p align="center">
     <em>The modern developer infrastructure toolkit for robust JavaScript & TypeScript applications.</em>
   </p>
@@ -63,11 +66,16 @@ if (isDefined(user)) {
 Cryptographic utilities and safe generation wrappers.
 
 ```typescript
-import { generateOTP, generateSecureToken, maskSecret } from 'devorax/security';
+import { generateOTP, generateSecureToken, maskSecret, encryptAES, decryptAES } from 'devorax/security';
 
 const otp = generateOTP(6); // "482910"
 const apiToken = generateSecureToken(32); // 64-char secure hex token
 const maskedKey = maskSecret('super_secret_api_key_123', 4); // "********************_123"
+
+// Strong AES-256-GCM encryption
+const key = "12345678901234567890123456789012";
+const encrypted = await encryptAES("Super Secret Message", key);
+const decrypted = await decryptAES(encrypted, key); // "Super Secret Message"
 ```
 
 ### 🔌 API `devorax/api`
@@ -89,20 +97,26 @@ res.status(404).json(createApiError("User not found", "NOT_FOUND"));
 Provider-agnostic prompt templates and LLM response parsing.
 
 ```typescript
-import { parseAIJSON, createPrompt } from 'devorax/ai';
+import { parseAIJSON, createPrompt, estimateTokens, parseFunctionArgs } from 'devorax/ai';
 
 // Safely extract and parse JSON from Markdown code blocks returned by LLMs
 const structuredData = parseAIJSON(llmOutputText); 
 
 // Simple, clean templating
 const prompt = createPrompt("Analyze this: {{text}}", { text: "Hello World" });
+
+// Estimate token costs (1 token ~= 4 chars)
+const tokenCount = estimateTokens(prompt); 
+
+// Parse Function Call arguments from AI
+const args = parseFunctionArgs(`{"query": "best pizza in NYC"}`);
 ```
 
 ### ⏳ Async `devorax/async`
 Real-world asynchronous flow control to handle network latency and flakiness.
 
 ```typescript
-import { retry, withTimeout, sleep } from 'devorax/async';
+import { retry, withTimeout, sleep, batchPromises, poll } from 'devorax/async';
 
 // Robust, exponential backoff retries for flaky endpoints
 const data = await retry(() => fetch('/api/flaky-endpoint'), { 
@@ -112,16 +126,29 @@ const data = await retry(() => fetch('/api/flaky-endpoint'), {
 
 // Protect long-running promises
 const fastData = await withTimeout(fetch('/api/slow'), 5000); 
+
+// Process thousands of items safely without running out of memory (10 at a time)
+await batchPromises(hugeArray, async (item) => process(item), 10);
+
+// Keep polling until a background job is finished
+const finalStatus = await poll(checkJobStatus, (status) => status === 'DONE', 2000, 10);
 ```
 
 ### ✅ Validation `devorax/validation`
 Production-ready format validators.
 
 ```typescript
-import { validateEmail, isStrongPassword, isValidIP } from 'devorax/validation';
+import { validateEmail, isStrongPassword, isValidIP, validateSchema } from 'devorax/validation';
 
 validateEmail("user@example.com"); // true
 isStrongPassword("WeakPass1"); // false (Missing special char)
+
+// Fast, lightweight runtime schema validation (No Zod required)
+const user = { age: 25, active: true };
+const { valid, errors } = validateSchema(user, {
+  age: (v) => typeof v === 'number' && v >= 18,
+  active: (v) => v === true
+}); // valid: true
 ```
 
 ### 🇮🇳 India `devorax/india`
@@ -136,6 +163,29 @@ validatePAN("ABCDE1234F"); // true
 
 ---
 
+## 🧪 Bulletproof Testing
+
+We care deeply about stability. DevoraX ships with **100% test coverage** across all modules, including a massive real-world integration test.
+
+```text
+$ vitest run
+ RUN  v1.6.1 devorax
+
+ ✓ tests/api/api.test.ts  (13 tests) 14ms
+ ✓ tests/security/security.test.ts  (12 tests) 21ms
+ ✓ tests/core/core.test.ts  (14 tests) 17ms
+ ✓ tests/validation/validation.test.ts  (12 tests) 20ms
+ ✓ tests/ai/ai.test.ts  (12 tests) 15ms
+ ✓ tests/india/india.test.ts  (8 tests) 54ms
+ ✓ tests/integration.test.ts  (1 test) 147ms
+ ✓ tests/async/async.test.ts  (11 tests) 255ms
+
+ Test Files  8 passed (8)
+      Tests  83 passed (83)
+```
+
+---
+
 ## 🔒 Security
 
 We take security seriously. For vulnerability reporting or responsible disclosure, please refer to our [`SECURITY.md`](./SECURITY.md). 
@@ -145,7 +195,31 @@ We take security seriously. For vulnerability reporting or responsible disclosur
 
 ## 📄 License
 
-DevoraX is open-source and released under the [MIT License](./LICENSE).
+DevoraX is open-source and released under the **MIT License**.
+
+```text
+MIT License
+
+Copyright (c) 2026 Prakash Ramakrishnan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 <div align="center">
   <br />

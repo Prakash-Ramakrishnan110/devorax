@@ -89,3 +89,54 @@ export async function retry<T>(fn: () => Promise<T>, options: RetryOptions = {})
 
   throw lastError;
 }
+
+/**
+ * Executes an array of promises in batches (chunks) to avoid overwhelming resources.
+ * 
+ * @param items - Array of items to process
+ * @param processor - Async function to process each item
+ * @param batchSize - Maximum number of promises to run concurrently
+ * @returns A promise resolving to an array of processed results
+ */
+export async function batchPromises<T, R>(
+  items: T[],
+  processor: (item: T) => Promise<R>,
+  batchSize: number = 5
+): Promise<R[]> {
+  const results: R[] = [];
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    const batchResults = await Promise.all(batch.map(processor));
+    results.push(...batchResults);
+  }
+  return results;
+}
+
+/**
+ * Polls a function repeatedly until a condition is met or a timeout is reached.
+ * 
+ * @param fn - The function to poll, returning a Promise
+ * @param condition - A function evaluating the result; returning true stops the polling
+ * @param intervalMs - Time to wait between polls
+ * @param maxAttempts - Maximum number of polls before giving up
+ * @returns The final result of fn that satisfied the condition
+ */
+export async function poll<T>(
+  fn: () => Promise<T>,
+  condition: (result: T) => boolean,
+  intervalMs: number = 1000,
+  maxAttempts: number = 10
+): Promise<T> {
+  let attempts = 0;
+  while (attempts < maxAttempts) {
+    const result = await fn();
+    if (condition(result)) {
+      return result;
+    }
+    attempts++;
+    if (attempts < maxAttempts) {
+      await sleep(intervalMs);
+    }
+  }
+  throw new Error(`Polling timed out after ${maxAttempts} attempts`);
+}
