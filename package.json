@@ -1,6 +1,6 @@
 {
   "name": "@prakash1935/devorax",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Developer infrastructure toolkit connecting common pieces needed for modern applications.",
   "keywords": [
     "utility",
@@ -118,8 +118,8 @@
     "node": ">=18.0.0"
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch",
+    "build": "node init && tsup",
+    "dev": "node init && tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
