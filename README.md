@@ -259,5 +259,5 @@ SOFTWARE.
 
 <div align="center">
   <br />
-  <sub>Built with ❤️ for modern software engineers.</sub>
+  <sub>Built with ❤️ by Prakash Ramakrishnan for modern software engineers.</sub>
 </div>
