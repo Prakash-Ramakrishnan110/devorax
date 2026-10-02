@@ -42,6 +42,42 @@ pnpm add @prakash1935/devorax
 
 ---
 
+## 🚀 Quick Test (Copy & Paste)
+
+Want to see DevoraX in action right now? Open your terminal, create a test folder, and run one of these snippets to test the AES encryption module instantly!
+
+**For Windows (PowerShell):**
+```powershell
+mkdir devorax-test; cd devorax-test
+npm init -y
+npm install @prakash1935/devorax
+Set-Content test.mjs -Value @"
+import { encryptAES, decryptAES } from '@prakash1935/devorax/security';
+
+const encrypted = await encryptAES('DevoraX is live!', 'my-password');
+console.log('🔒 Encrypted:', encrypted);
+console.log('🔓 Decrypted:', await decryptAES(encrypted, 'my-password'));
+"@
+node test.mjs
+```
+
+**For Mac/Linux:**
+```bash
+mkdir devorax-test && cd devorax-test
+npm init -y
+npm install @prakash1935/devorax
+cat << 'EOF' > test.mjs
+import { encryptAES, decryptAES } from '@prakash1935/devorax/security';
+
+const encrypted = await encryptAES('DevoraX is live!', 'my-password');
+console.log('🔒 Encrypted:', encrypted);
+console.log('🔓 Decrypted:', await decryptAES(encrypted, 'my-password'));
+EOF
+node test.mjs
+```
+
+---
+
 ## 🛠️ Modules & Quick Start
 
 DevoraX is divided into highly focused sub-modules. Keep your bundle sizes incredibly small by importing only from the modules you need!
