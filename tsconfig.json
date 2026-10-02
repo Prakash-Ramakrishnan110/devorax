@@ -23,7 +23,8 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "types": []
   },
   "include": ["src/**/*", "tests/**/*", "*.config.ts", "env.d.ts"],
   "exclude": ["node_modules", "dist"]
